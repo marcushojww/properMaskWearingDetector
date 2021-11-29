@@ -45,7 +45,7 @@ trainPaths = imagePaths[testPathsLen + valPathsLen:]
 # copy the training and validation images to their respective
 # directories
 print("[INFO] copying training and validation images...")
-print(f'[INFO] Training images:{trainPathsLen}\nValidation images: {valPathsLen}\nTest images: {testPathsLen}')
+print(f'Training images:{trainPathsLen}\nValidation images: {valPathsLen}\nTest images: {testPathsLen}')
 copy_images(trainPaths, config.TRAIN)
 copy_images(valPaths, config.VAL)
 copy_images(testPaths, config.TEST)

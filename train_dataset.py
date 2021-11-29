@@ -89,6 +89,18 @@ H = {
 	"val_acc": []
 }
 
+# visualize dataset
+# matplotlib.use('tkagg')
+# train_features, train_labels = next(iter(trainDataLoader))
+# print(f"Feature batch shape: {train_features.size()}")
+# print(f"Labels batch shape: {train_labels.size()}")
+# img = train_features[0].squeeze()
+# img = img[0]
+# label = train_labels[0]
+# plt.imshow(img)
+# plt.show()
+# print(f"Label: {label}")
+
 # measure how long training is going to take
 print("[INFO] training the network...")
 startTime = time.time()
@@ -111,11 +123,14 @@ for e in range(0, config.EPOCHS):
 	for (x, y) in trainDataLoader:
 		# send the input to the device
 		(x, y) = (x.to(device), y.to(device))
-
+		
 		# perform a forward pass and calculate the training loss
 		pred = model(x)
 		loss = lossFn(pred, y)
-
+		print(y)
+		print(f'label size: {y.shape}\n\n')
+		print(pred.argmax(1))
+		print(f'prediction size: {pred.argmax(1).shape}')
 		# zero out the gradients, perform the backpropagation step,
 		# and update the weights
 		opt.zero_grad()
