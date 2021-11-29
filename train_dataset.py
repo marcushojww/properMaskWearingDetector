@@ -1,9 +1,9 @@
 # USAGE
-# python train.py --model output/model.pth --plot output/plot.png
+# python3 train_dataset.py --model output/model.pth --plot output/plot.png
 
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
-matplotlib.use("Agg")
+# matplotlib.use("Agg")
 
 # import the necessary packages
 from lenet import LeNet
@@ -127,10 +127,7 @@ for e in range(0, config.EPOCHS):
 		# perform a forward pass and calculate the training loss
 		pred = model(x)
 		loss = lossFn(pred, y)
-		print(y)
-		print(f'label size: {y.shape}\n\n')
-		print(pred.argmax(1))
-		print(f'prediction size: {pred.argmax(1).shape}')
+		
 		# zero out the gradients, perform the backpropagation step,
 		# and update the weights
 		opt.zero_grad()
