@@ -23,33 +23,38 @@ import config
 # set the device we will be using to train the model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# transform
 resize = transforms.Resize(size=(config.INPUT_HEIGHT, config.INPUT_WIDTH))
 predictTransform = transforms.Compose([resize, transforms.ToTensor()])
-# predictImage = predictTransform(im)
-# predictImage = predictImage[None,:].to(device)
 
-# visualize data
-# matplotlib.use('tkagg')
-# oneChannelPredictImage = predictImage[0]
-# plt.imshow(oneChannelPredictImage)
-# plt.show()
+# Method 1
 
-predictDataset = ImageFolder(root=config.PREDICT, transform=predictTransform)
-predictDataLoader = DataLoader(predictDataset, batch_size=1)
+# predictDataset = ImageFolder(root=config.PREDICT, transform=predictTransform)
+# predictDataLoader = DataLoader(predictDataset, batch_size=1)
+
+# Method 2
+img = Image.open(r'./predict/with_mask/mask.jpg')
+input = predictTransform(img)
+input = input.unsqueeze(0)
 
 # load saved model
 model = torch.load('./output/model.pth')
 model.eval()
 
 with torch.no_grad():
-    for (image, label) in predictDataLoader:
-        image = image.to(device)
-        # obtain prediction
-        pred = model(image)
-        # compare predictions results for both classes
+    output = model(input)
+    if (output[0][0] > output[0][1]):
+        print(f'Prediction: With Mask')
+    else:
+        print(f'Prediction: Without Mask')
+#     for (image, label) in predictDataLoader:
+#         image = image.to(device)
+#         # obtain prediction
+#         pred = model(image)
+#         # compare predictions results for both classes
 
-        if (pred[0][0] > pred[0][1]): #predicted with_mask
-            print("[RESULT] Model predicted with mask")
-        else:
-            print("[RESULT] Model predicted without mask")
+#         if (pred[0][0] > pred[0][1]): #predicted with_mask
+#             print("[RESULT] Model predicted with mask")
+#         else:
+#             print("[RESULT] Model predicted without mask")
     
