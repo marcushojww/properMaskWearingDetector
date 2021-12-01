@@ -33,7 +33,7 @@ predictTransform = transforms.Compose([resize, transforms.ToTensor()])
 # predictDataLoader = DataLoader(predictDataset, batch_size=1)
 
 # Method 2
-img = Image.open(r'./predict/with_mask/mask.jpg')
+img = Image.open(r'./predict/without_mask/00009.png')
 input = predictTransform(img)
 input = input.unsqueeze(0)
 
@@ -43,7 +43,7 @@ model.eval()
 
 with torch.no_grad():
     output = model(input)
-    if (output[0][0] > output[0][1]):
+    if (output.argmax(1) == 0):
         print(f'Prediction: With Mask')
     else:
         print(f'Prediction: Without Mask')
