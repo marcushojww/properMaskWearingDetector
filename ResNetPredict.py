@@ -14,20 +14,25 @@ transform = transforms.Compose([transforms.Resize(img_height),transforms.CenterC
 input_shape=torch.Tensor((img_height, img_width))
 
 model_resnet50 = torch.load(r'./RNoutput/RNmodel.pth')
-testimg = Image.open(r'./googleTestImages/test5.jpg')
+testimg = Image.open(r'./googleTestImages/improper_mask/test3.jpg')
 testimg = transform(testimg)
 testimg=testimg[None,:].to(device) #trick to add one more dimension (batch dimension)
 
 model_resnet50.eval()
 with torch.no_grad():
   pred_prob = torch.softmax(model_resnet50(testimg),dim=1)
+  print(pred_prob)
   pred_class = pred_prob.argmax(1)
 
 if pred_class == 0:
     prediction = 'with mask'
-    print("This image is a "+ prediction + ".")
+    print("This image is "+ prediction + ".")
     print('With probability of ' + str(pred_prob[0,0].item()))
+elif pred_class == 1:
+    prediction = 'improper mask'
+    print("This image is "+ prediction + ".")
+    print('With probability of ' + str(pred_prob[0,1].item()))
 else:
     prediction = 'without mask'
-    print("This image is a "+ prediction + ".")
-    print('With probability of ' + str(pred_prob[0,1].item()))
+    print("This image is "+ prediction + ".")
+    print('With probability of ' + str(pred_prob[0,2].item()))

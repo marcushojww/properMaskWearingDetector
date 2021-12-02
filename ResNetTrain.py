@@ -18,7 +18,8 @@ train_data_dir = 'train'
 validation_data_dir = 'val'
 test_data_dir = 'test'
 
-classes = ('With mask','Without mask')
+classes = ('With mask','improper mask','Without mask')
+num_classes = len(classes)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -37,7 +38,7 @@ for param in model_resnet50.layer4.parameters(): #disabling gradient in the 'fea
     param.require_grad = False #tell the model to keep the weights fixed
 
 num_features = model_resnet50.fc.in_features #get the number of inputs for the very last layer
-model_resnet50.fc = nn.Linear(num_features, 2).to(device) # Replace the final classification layer
+model_resnet50.fc = nn.Linear(num_features, num_classes).to(device) # Replace the final classification layer
 # features = list(model_resnet50.fc.children())[:-1] # Replace the final classification layer
 # features.extend([nn.Linear(num_features, 2)])
 # features.extend([nn.Softmax(dim=1)])
@@ -81,39 +82,39 @@ val_dataloader_forresnet50 = DataLoader(val_dataset, batch_size=batch_size,shuff
 test_dataloader_forresnet50 = DataLoader(test_dataset, batch_size=batch_size,shuffle=False,num_workers=2)
 
 # print(model_resnet50)
-# def gimmefeatures(model_resnet50,dataloader):
-#     model_resnet50.eval()
-#     output=torch.zeros((len(dataloader.dataset),2048,1,1))
-#     label=torch.zeros((len(dataloader.dataset)))
-#     i=0
+def gimmefeatures(model_resnet50,dataloader):
+    model_resnet50.eval()
+    output=torch.zeros((len(dataloader.dataset),2048,1,1))
+    label=torch.zeros((len(dataloader.dataset)))
+    i=0
 
-#     with torch.no_grad():
-#         for j, data in enumerate(dataloader):
-#             inputs, labels = data
-#             inputs=inputs
-#             outputs=model_resnet50.maxpool(model_resnet50.relu(model_resnet50.bn1(model_resnet50.conv1(inputs))))
-#             outputs=model_resnet50.layer1(outputs)
-#             outputs=model_resnet50.layer2(outputs)
-#             outputs=model_resnet50.layer3(outputs)
-#             outputs=model_resnet50.layer4(outputs)
-#             outputs=model_resnet50.avgpool(outputs)
-#             output[i:i+outputs.shape[0],:,:,:]=outputs
-#             label[i:i+labels.shape[0]]=labels
-#             i=i+outputs.shape[0]
-#             print(i)
+    with torch.no_grad():
+        for j, data in enumerate(dataloader):
+            inputs, labels = data
+            inputs=inputs
+            outputs=model_resnet50.maxpool(model_resnet50.relu(model_resnet50.bn1(model_resnet50.conv1(inputs))))
+            outputs=model_resnet50.layer1(outputs)
+            outputs=model_resnet50.layer2(outputs)
+            outputs=model_resnet50.layer3(outputs)
+            outputs=model_resnet50.layer4(outputs)
+            outputs=model_resnet50.avgpool(outputs)
+            output[i:i+outputs.shape[0],:,:,:]=outputs
+            label[i:i+labels.shape[0]]=labels
+            i=i+outputs.shape[0]
+            print(i)
 
-#     return output, label
+    return output, label
 
-# train_feats, train_labels=gimmefeatures(model_resnet50,train_dataloader_forresnet50)
+train_feats, train_labels=gimmefeatures(model_resnet50,train_dataloader_forresnet50)
 
-# torch.save((train_feats,train_labels),'train_data.pt')
+torch.save((train_feats,train_labels),'./ResNet_Features/train_data.pt')
 
-# val_feats, val_labels=gimmefeatures(model_resnet50,val_dataloader_forresnet50)
+val_feats, val_labels=gimmefeatures(model_resnet50,val_dataloader_forresnet50)
 
-# torch.save((val_feats,val_labels),'val_data.pt')
+torch.save((val_feats,val_labels),'./ResNet_Features/val_data.pt')
 
-train_feats,train_labels=torch.load('./ResNet_Features/train_data.pt')
-val_feats,val_labels=torch.load('./ResNet_Features/val_data.pt')
+# train_feats,train_labels=torch.load('./ResNet_Features/train_data.pt')
+# val_feats,val_labels=torch.load('./ResNet_Features/val_data.pt')
 
 optimizer = torch.optim.RMSprop(model_resnet50.parameters(), lr=0.00001)
 criterion = torch.nn.CrossEntropyLoss()
@@ -129,7 +130,7 @@ def train_resnet50_classifier(modelclassifier,dataloader,val_dataloader):
     modelclassifier.train() #set the mode of the model to train mode
     total_acc, total_count, rep_acc, rep_count = 0, 0, 0, 0
     train_loss, rep_loss=0.0, 0.0
-    log_interval = 15
+    log_interval = 30
     start_time = time.time()
     # print("training...")
     for i, data in enumerate(dataloader):
@@ -215,7 +216,7 @@ va=[]
 tl=[]
 vl=[]
 
-for epoch in range(30):
+for epoch in range(100):
   train_acc, val_acc, train_loss, val_loss=train_resnet50_classifier(model_resnet50.fc,train_feat_dataloader,val_feat_dataloader)
   ta.append(train_acc)
   va.append(val_acc)
