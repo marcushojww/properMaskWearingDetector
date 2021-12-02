@@ -12,7 +12,7 @@ transform = transforms.Compose([transforms.Resize(img_height),transforms.CenterC
 input_shape=torch.Tensor((img_height, img_width))
 
 model_GoogLeNet = torch.load(r'./GLNoutput/GLNmodel.pth')
-testimg = Image.open(r'./googleTestImages/with_mask/test5.jpg')
+testimg = Image.open(r'./googleTestImages/improper_mask/test3.jpg')
 testimg = transform(testimg)
 testimg=testimg[None,:].to(device) #trick to add one more dimension (batch dimension)
 
@@ -23,11 +23,11 @@ with torch.no_grad():
   pred_class = pred_prob.argmax(1)
 
 if pred_class == 0:
-    prediction = 'with mask'
+    prediction = 'improper mask'
     print("This image is "+ prediction + ".")
     print('With probability of ' + str(pred_prob[0,0].item()))
 elif pred_class == 1:
-    prediction = 'improper mask'
+    prediction = 'with mask'
     print("This image is "+ prediction + ".")
     print('With probability of ' + str(pred_prob[0,1].item()))
 else:

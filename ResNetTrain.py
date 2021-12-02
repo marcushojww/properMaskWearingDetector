@@ -193,6 +193,9 @@ def train_resnet50_classifier(modelclassifier,dataloader,val_dataloader):
 def evaluate_resnet50(model,dataloader):
     model.eval()
     total_acc, total_count = 0, 0
+    class0_count,class0_correct = 0,0
+    class1_count,class1_correct = 0,0
+    class2_count,class2_correct = 0,0
     wrong=torch.zeros((len(dataloader.dataset)),1)
     j=0
     with torch.no_grad():
@@ -205,26 +208,51 @@ def evaluate_resnet50(model,dataloader):
 			torch.float)
             correct=correct.reshape(correct.shape[0],1).int()
             # print(correct)
+
+            for k, x in enumerate(labels):
+                if(x.data==0):
+                    class0_count += 1.0
+                    if(correct[k].item() == True):
+                        class0_correct += 1.0
+                    
+                    else:print(k)
+                elif(x.data==1):
+                    class1_count += 1.0
+                    if(correct[k].data[0] == True):
+                        class1_correct += 1.0
+                else:
+                    class2_count += 1.0
+                    if(correct[k].data[0] == True):
+                        class2_correct += 1.0
             total_acc += correct.sum().item()
             total_count += labels.size(0)
             wrong[j:j+labels.size(0),:]=~correct
             j=j+labels.size(0)
-    return total_acc/total_count, wrong
+    class0_accuracy = class0_correct/class0_count
+    class1_accuracy = class1_correct/class1_count
+    class2_accuracy = class2_correct/class2_count
+    return total_acc/total_count, wrong, class0_accuracy,class1_accuracy, class2_accuracy
 
 ta=[]
 va=[]
 tl=[]
 vl=[]
 
-for epoch in range(100):
+for epoch in range(20):
   train_acc, val_acc, train_loss, val_loss=train_resnet50_classifier(model_resnet50.fc,train_feat_dataloader,val_feat_dataloader)
   ta.append(train_acc)
   va.append(val_acc)
   tl.append(train_loss)
   vl.append(val_loss)
 
-accuracy,wrong = evaluate_resnet50(model_resnet50,test_dataloader_forresnet50)
-print(accuracy)
+accuracy,wrong,class0_accuracy,class1_accuracy,class2_accuracy = evaluate_resnet50(model_resnet50,test_dataloader_forresnet50)
+wrong_index = torch.where(wrong==1) # get indeces of the wrong predictions
+wrong_index = wrong_index[0]
+print(wrong_index)
+print("Overall test accuracy: %.4f " % accuracy)
+print("With mask test accuracy: %.4f " %  class0_accuracy)
+print("Improper mask test accuracy: %.4f " % class1_accuracy)
+print("Without mask test accuracy: %.4f " % class2_accuracy)
 
 
 with torch.no_grad():
