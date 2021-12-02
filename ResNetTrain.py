@@ -82,39 +82,39 @@ val_dataloader_forresnet50 = DataLoader(val_dataset, batch_size=batch_size,shuff
 test_dataloader_forresnet50 = DataLoader(test_dataset, batch_size=batch_size,shuffle=False,num_workers=2)
 
 # print(model_resnet50)
-def gimmefeatures(model_resnet50,dataloader):
-    model_resnet50.eval()
-    output=torch.zeros((len(dataloader.dataset),2048,1,1))
-    label=torch.zeros((len(dataloader.dataset)))
-    i=0
+# def gimmefeatures(model_resnet50,dataloader):
+#     model_resnet50.eval()
+#     output=torch.zeros((len(dataloader.dataset),2048,1,1))
+#     label=torch.zeros((len(dataloader.dataset)))
+#     i=0
 
-    with torch.no_grad():
-        for j, data in enumerate(dataloader):
-            inputs, labels = data
-            inputs=inputs
-            outputs=model_resnet50.maxpool(model_resnet50.relu(model_resnet50.bn1(model_resnet50.conv1(inputs))))
-            outputs=model_resnet50.layer1(outputs)
-            outputs=model_resnet50.layer2(outputs)
-            outputs=model_resnet50.layer3(outputs)
-            outputs=model_resnet50.layer4(outputs)
-            outputs=model_resnet50.avgpool(outputs)
-            output[i:i+outputs.shape[0],:,:,:]=outputs
-            label[i:i+labels.shape[0]]=labels
-            i=i+outputs.shape[0]
-            print(i)
+#     with torch.no_grad():
+#         for j, data in enumerate(dataloader):
+#             inputs, labels = data
+#             inputs=inputs
+#             outputs=model_resnet50.maxpool(model_resnet50.relu(model_resnet50.bn1(model_resnet50.conv1(inputs))))
+#             outputs=model_resnet50.layer1(outputs)
+#             outputs=model_resnet50.layer2(outputs)
+#             outputs=model_resnet50.layer3(outputs)
+#             outputs=model_resnet50.layer4(outputs)
+#             outputs=model_resnet50.avgpool(outputs)
+#             output[i:i+outputs.shape[0],:,:,:]=outputs
+#             label[i:i+labels.shape[0]]=labels
+#             i=i+outputs.shape[0]
+#             print(i)
 
-    return output, label
+#     return output, label
 
-train_feats, train_labels=gimmefeatures(model_resnet50,train_dataloader_forresnet50)
+# train_feats, train_labels=gimmefeatures(model_resnet50,train_dataloader_forresnet50)
 
-torch.save((train_feats,train_labels),'./ResNet_Features/train_data.pt')
+# torch.save((train_feats,train_labels),'./ResNet_Features/train_data.pt')
 
-val_feats, val_labels=gimmefeatures(model_resnet50,val_dataloader_forresnet50)
+# val_feats, val_labels=gimmefeatures(model_resnet50,val_dataloader_forresnet50)
 
-torch.save((val_feats,val_labels),'./ResNet_Features/val_data.pt')
+# torch.save((val_feats,val_labels),'./ResNet_Features/val_data.pt')
 
-# train_feats,train_labels=torch.load('./ResNet_Features/train_data.pt')
-# val_feats,val_labels=torch.load('./ResNet_Features/val_data.pt')
+train_feats,train_labels=torch.load('./ResNet_Features/train_data.pt')
+val_feats,val_labels=torch.load('./ResNet_Features/val_data.pt')
 
 optimizer = torch.optim.RMSprop(model_resnet50.parameters(), lr=0.00001)
 criterion = torch.nn.CrossEntropyLoss()
