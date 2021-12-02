@@ -82,7 +82,7 @@ val_dataloader_forresnet50 = DataLoader(val_dataset, batch_size=batch_size,shuff
 test_dataloader_forresnet50 = DataLoader(test_dataset, batch_size=batch_size,shuffle=False,num_workers=2)
 
 # print(model_resnet50)
-# def gimmefeatures(model_resnet50,dataloader):
+# def extractFeatures(model_resnet50,dataloader):
 #     model_resnet50.eval()
 #     output=torch.zeros((len(dataloader.dataset),2048,1,1))
 #     label=torch.zeros((len(dataloader.dataset)))
@@ -105,11 +105,11 @@ test_dataloader_forresnet50 = DataLoader(test_dataset, batch_size=batch_size,shu
 
 #     return output, label
 
-# train_feats, train_labels=gimmefeatures(model_resnet50,train_dataloader_forresnet50)
+# train_feats, train_labels=extractFeatures(model_resnet50,train_dataloader_forresnet50)
 
 # torch.save((train_feats,train_labels),'./ResNet_Features/train_data.pt')
 
-# val_feats, val_labels=gimmefeatures(model_resnet50,val_dataloader_forresnet50)
+# val_feats, val_labels=extractFeatures(model_resnet50,val_dataloader_forresnet50)
 
 # torch.save((val_feats,val_labels),'./ResNet_Features/val_data.pt')
 
@@ -190,6 +190,9 @@ def train_resnet50_classifier(modelclassifier,dataloader,val_dataloader):
             (epoch, cum_loss / (j + 1), val_acc/val_count,elapsed))
     return total_acc/total_count, val_acc/val_count, train_loss/(i+1), cum_loss / (j + 1)
 
+
+# summary(model_resnet50,(3,img_height,img_width)) # using torchsummary
+
 def evaluate_resnet50(model,dataloader):
     model.eval()
     total_acc, total_count = 0, 0
@@ -214,8 +217,6 @@ def evaluate_resnet50(model,dataloader):
                     class0_count += 1.0
                     if(correct[k].item() == True):
                         class0_correct += 1.0
-                    
-                    else:print(k)
                 elif(x.data==1):
                     class1_count += 1.0
                     if(correct[k].data[0] == True):
@@ -238,7 +239,7 @@ va=[]
 tl=[]
 vl=[]
 
-for epoch in range(20):
+for epoch in range(40):
   train_acc, val_acc, train_loss, val_loss=train_resnet50_classifier(model_resnet50.fc,train_feat_dataloader,val_feat_dataloader)
   ta.append(train_acc)
   va.append(val_acc)

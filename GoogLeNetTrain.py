@@ -25,7 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 model_googLeNet = models.googlenet(pretrained=True).to(device)
 
-print(model_googLeNet)
+# print(model_googLeNet)
 
 for param in model_googLeNet.inception3a.parameters(): #disabling gradient in the 'features' part of the model (convolutional part)
     param.require_grad = False #tell the model to keep the weights fixed
@@ -151,7 +151,7 @@ def train_GoogLeNet_classifier(modelclassifier,dataloader,val_dataloader):
     modelclassifier.train() #set the mode of the model to train mode
     total_acc, total_count, rep_acc, rep_count = 0, 0, 0, 0
     train_loss, rep_loss=0.0, 0.0
-    log_interval = 30
+    log_interval = 50
     start_time = time.time()
     # print("training...")
     for i, data in enumerate(dataloader):

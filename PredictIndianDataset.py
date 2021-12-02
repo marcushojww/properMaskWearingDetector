@@ -24,7 +24,7 @@ import config
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # load saved model
-model = torch.load('./GLNoutput/GLNmodel.pth')
+model = torch.load('./RNoutput/RNmodel.pth')
 
 # initialize our data augmentation functions
 resize = transforms.Resize(size=(config.INPUT_HEIGHT,
@@ -32,7 +32,7 @@ resize = transforms.Resize(size=(config.INPUT_HEIGHT,
 
 testTransforms = transforms.Compose([resize, transforms.ToTensor()])
 
-test_folder = input("Enter 'test' or 'test_2' for model testing: ")
+test_folder = 'IndianDataset'
 
 # initialize the training and validation dataset
 print("[INFO] loading test dataset...")
