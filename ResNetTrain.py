@@ -37,7 +37,7 @@ for param in model_resnet50.layer3.parameters(): #disabling gradient in the 'fea
 for param in model_resnet50.layer4.parameters(): #disabling gradient in the 'features' part of the model (convolutional part)
     param.require_grad = False #tell the model to keep the weights fixed
 
-num_features = model_resnet50.fc.in_features #get the number of inputs for the very last layer
+num_features = model_resnet50.fc.in_features #get the number of inputs for the very last layer  
 model_resnet50.fc = nn.Linear(num_features, num_classes).to(device) # Replace the final classification layer
 # features = list(model_resnet50.fc.children())[:-1] # Replace the final classification layer
 # features.extend([nn.Linear(num_features, 2)])
@@ -45,7 +45,7 @@ model_resnet50.fc = nn.Linear(num_features, num_classes).to(device) # Replace th
 
 # model_resnet50.fc = nn.Sequential(*features).to(device)
 
-# print(model_resnet50)
+print(model_resnet50)
 
 # Resize the image and do a center crop, and store them on a tensor
 transform = transforms.Compose([transforms.Resize(img_height),transforms.CenterCrop(img_width), transforms.ToTensor()])
@@ -247,9 +247,7 @@ for epoch in range(40):
   vl.append(val_loss)
 
 accuracy,wrong,class0_accuracy,class1_accuracy,class2_accuracy = evaluate_resnet50(model_resnet50,test_dataloader_forresnet50)
-wrong_index = torch.where(wrong==1) # get indeces of the wrong predictions
-wrong_index = wrong_index[0]
-print(wrong_index)
+
 print("Overall test accuracy: %.4f " % accuracy)
 print("With mask test accuracy: %.4f " %  class0_accuracy)
 print("Improper mask test accuracy: %.4f " % class1_accuracy)

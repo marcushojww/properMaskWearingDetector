@@ -12,7 +12,7 @@ transform = transforms.Compose([transforms.Resize(img_height),transforms.CenterC
 input_shape=torch.Tensor((img_height, img_width))
 
 model_GoogLeNet = torch.load(r'./GLNoutput/GLNmodel.pth')
-testimg = Image.open(r'./googleTestImages/improper_mask/test3.jpg')
+testimg = Image.open(r'./googleTestImages/improper_mask/test2.jpg')
 testimg = transform(testimg)
 testimg=testimg[None,:].to(device) #trick to add one more dimension (batch dimension)
 

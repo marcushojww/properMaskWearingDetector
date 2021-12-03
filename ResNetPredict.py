@@ -14,8 +14,8 @@ transform = transforms.Compose([transforms.Resize(img_height),transforms.CenterC
 input_shape=torch.Tensor((img_height, img_width))
 
 model_resnet50 = torch.load(r'./RNoutput/RNmodel.pth')
-# testimg = Image.open(r'./googleTestImages/improper_mask/test3.jpg')
-testimg = Image.open(r'./test/incorrect_mask/00015_Mask_Mouth_Chin.jpg')
+testimg = Image.open(r'./googleTestImages/with_mask/test5.jpg')
+# testimg = Image.open(r'./test/incorrect_mask/00003_Mask_Mouth_Chin.jpg')
 testimg = transform(testimg)
 testimg=testimg[None,:].to(device) #trick to add one more dimension (batch dimension)
 
