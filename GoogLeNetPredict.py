@@ -23,11 +23,11 @@ with torch.no_grad():
   pred_class = pred_prob.argmax(1)
 
 if pred_class == 0:
-    prediction = 'improper mask'
+    prediction = 'correct mask'
     print("This image is "+ prediction + ".")
     print('With probability of ' + str(pred_prob[0,0].item()))
 elif pred_class == 1:
-    prediction = 'with mask'
+    prediction = 'incorrect mask'
     print("This image is "+ prediction + ".")
     print('With probability of ' + str(pred_prob[0,1].item()))
 else:
