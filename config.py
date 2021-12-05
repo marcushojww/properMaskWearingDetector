@@ -1,7 +1,7 @@
 # specify path to the flowers and mnist dataset
 MASK_DATASET_PATH = "dataset"
 WITHOUT_MASK_PATH = "dataset/without_mask"
-CORRECT_MASK_PATH = "dataset/correct_mask"
+CORRECT_MASK_PATH = "dataset/with_mask"
 INCORRECT_MASK_PATH = "dataset/incorrect_mask"
 
 # specify the paths to our training and validation set 
