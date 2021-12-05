@@ -21,4 +21,4 @@ TEST_SPLIT = 0.2
 # define training hyperparameters
 INIT_LR = 1e-3
 BATCH_SIZE = 64
-EPOCHS = 15
+EPOCHS = 20
