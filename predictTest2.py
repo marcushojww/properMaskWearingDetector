@@ -36,8 +36,6 @@ elif (inputModel == 'l'):
 
 
 if (inputModel == 'l' or inputModel == 'g' or inputModel == 'r'):
-  # load saved model
-  model = torch.load('./LenetOutput/model.pth')
 
   # initialize our data augmentation functions
   resize = transforms.Resize(size=(config.INPUT_HEIGHT,
